@@ -1,9 +1,6 @@
 import pymysql
 import math
-connection = pymysql.connect(host='127.0.0.1',
-                             user='*****',
-                             password='*****',
-                             db='******',
+connection = pymysql.connect(
                             )
 import pandas as pd
 df = pd.read_excel("短期資料整理.xlsx",sheet_name="短期合檔")

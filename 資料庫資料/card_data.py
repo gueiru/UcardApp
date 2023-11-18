@@ -1,8 +1,5 @@
 import pymysql
-connection = pymysql.connect(host='127.0.0.1',
-                             user='*******',
-                             password='******',
-                             db='ucard',
+connection = pymysql.connect(
                             )
 
 import pandas as pd

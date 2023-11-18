@@ -1,8 +1,5 @@
 import pymysql
-connection = pymysql.connect(host='127.0.0.1',
-                             user='******',
-                             password='******',
-                             db='ucardtest',
+connection = pymysql.connect(
                             )
 import pandas as pd
 df = pd.read_excel("資料庫資料整理V2.xlsx",sheet_name="長期")
