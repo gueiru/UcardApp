@@ -1,12 +1,12 @@
 import pymysql
 connection = pymysql.connect(host='127.0.0.1',
-                             user='root',
-                             password='root',
-                             db='ucardtest',
-                            #ssl_ca='C:\Program Files (x86)\OpenSSL-Win32\DigiCertGlobalRootCA.crt.pem', ssl_disabled=False
+                             user='*******',
+                             password='******',
+                             db='ucard',
                             )
+
 import pandas as pd
-df = pd.read_excel("資料庫資料整理V2.xlsx",sheet_name="卡片")
+df = pd.read_excel("資料庫資料整理V5.xlsx",sheet_name="卡片")
 print(len(df))#總比數
 for i in range(len(df)):
     if len(str(df["銀行"][i]))==2:
@@ -20,17 +20,17 @@ for i in range(len(df)):
         id="00"+ str(df["號碼"][i])
     elif len(str(df["號碼"][i]))==2:
           id="0"+ str(df["號碼"][i])
-    else :
+    else :  
         id=str(df["號碼"][i])
 
     name=str(df["名稱"][i])
     address=str(df["網址"][i])
-    
+ 
 
 
     try:
             cursor = connection.cursor()
-            query = "INSERT INTO creditcard (bank,category,id,name,address) VALUES (%s, %s, %s, %s, %s)"
+            query = "INSERT INTO cards (`bank_id`,category,`card_id`,card_name,link) VALUES (%s,%s, %s, %s, %s)"
             cursor.execute(query, (bank,category,id,name,address))
             connection.commit()
             for i in cursor:
