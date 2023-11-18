@@ -1,13 +1,9 @@
 import pymysql
 import math
-connection = pymysql.connect(host='127.0.0.1',
-                             user='root',
-                             password='root',
-                             db='ucardtest',
-                            #ssl_ca='C:\Program Files (x86)\OpenSSL-Win32\DigiCertGlobalRootCA.crt.pem', ssl_disabled=False
+connection = pymysql.connect(
                             )
 import pandas as pd
-df = pd.read_excel("短期資料整理.xlsx",sheet_name="現折")
+df = pd.read_excel("短期資料整理.xlsx",sheet_name="短期合檔")
 #print(df)
 #print(len(df))#總比數
 for i in range(len(df)):
@@ -60,7 +56,7 @@ for i in range(len(df)):
 
             try:
                 cursor = connection.cursor()
-                query = "INSERT INTO discont (bank,category,id,title,start,end,`back`,restriction,`condition`,store,note,address,state) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                query = "INSERT INTO activity (bank_id,category,card_id,title,start,end,`back`,restriction,`condition`,store,note,address,state) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 cursor.execute(query, (bank,category,id,title,start,end,back,restriction,condition,store,note,address,state))
                 connection.commit()
                 for i in cursor:
@@ -71,27 +67,6 @@ for i in range(len(df)):
 
 
 
-
-'''
-for i in range(len(df)):
-    if len(str(df["銀行"][i]))==2:
-        bank=("0"+str(df["銀行"][i]))
-    else:
-        bank=str(df["銀行"][i])
-    
-    category=str(df["發行商"][i])
-    
-    if len(str(df["號碼"][i]))==1:
-        id="00"+ str(df["號碼"][i])
-    elif len(str(df["號碼"][i]))==2:
-          id="0"+ str(df["號碼"][i])
-    else :  
-        id=str(df["號碼"][i])
-
-    name=str(df["名稱"][i])
-    address=str(df["網址"][i])
-    
-'''
 
         
     #print (bank,c,id,name,address)
