@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 # 建立與 Neo4j 的連接
 uri = "neo4j+s://cd122923.databases.neo4j.io"
-driver = GraphDatabase.driver(uri, auth=("neo4j", "XMvLaxouvDASwAcmMpcndl7W9j6pf6RpLs7ahPjjxQg"))
+driver = GraphDatabase.driver(uri, auth=("neo4j", "password"))
 
 def run_query(tx, search_keyword):
     query = (
