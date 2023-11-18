@@ -86,6 +86,18 @@ class user_cardlist(db.Model):
     self.bank_id = bank_id
     self.category = category
     self.card_id = card_id
+    
+class basic(db.Model):
+  bank_id = db.Column(db.String(3), primary_key=True)
+  category = db.Column(db.String(1), primary_key=True)
+  card_id = db.Column(db.String(3), primary_key=True)
+  email = db.Column(db.String(150))
+  password = db.Column(db.String(60))
+
+  def __init__(self, user_id, email, password):
+    self.user_id = user_id
+    self.email = email
+    self.password = password
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -334,39 +346,66 @@ def getshop():
 
 @app.route('/recommend', methods=['GET'])
 def recommend():
-  search_keyword = request.json["search_keyword"]
+  search_keyword = request.json["shopname"]
   amount = request.json["amount"]
+  user_id = jwt.decode(request.json['usertoken'], app.config['JWT_SECRET_KEY'], algorithms=['HS256'])['user_id']
+
+  cardlist = user_cardlist.query.filter_by(user_id = user_id).all()
+  serialized_cards = [] # 推薦前的卡片id
   
-  uri = "neo4j+s://cd122923.databases.neo4j.io"
-  driver = GraphDatabase.driver(uri, auth=("neo4j", "密碼密碼密碼"))   #######################################neo4j密碼
+  for card in cardlist:
+    check = cards.query.filter_by(bank_id = card.bank_id, category = card.category, card_id = card.card_id).first()
+    serialized_card = {
+      'bank_id': card.bank_id,
+      'category': card.category,
+      'card_id': card.card_id,
+      'card_name': check.card_name,
+      'yn': True,
+      'fbamount': 0.0,
+      'shortremark': '展開看詳細...',
+      'longremark': '',
+      'link': check.link
+    }
+    serialized_cards.append(serialized_card)
+  
+  card_namelist = ['富邦數位生活卡', 'OpenPossible聯名卡']
 
-  # 定義一個查詢函式
-  def run_query(tx, search_keyword):
-    query = (
-        "MATCH (source)-[:reward]->(destination) "
-        "WHERE toLower(destination.name) CONTAINS toLower($search_keyword) "
-        "WITH source, destination, labels(destination) as destLabels "
-        "RETURN source, destination, "
-        "CASE WHEN 'Categorical' IN destLabels "
-        "     THEN NULL "
-        "     ELSE [(destination)-[:include]->(categoricalNode:Categorical)-[:reward]->(categoricalCard:card) | categoricalCard] "
-        "END as categoricalCards"
-    )
+  for i in range(len(card_namelist)):
+    cardinf = cards.query.filter_by(card_name = card_namelist[i]).all()
+    for card in cardinf:
+      serialized_card = {
+        'bank_id': card.bank_id,
+        'category': card.category,
+        'card_id': card.card_id,
+        'card_name': card.card_name,
+        'yn': False,
+        'fbamount': 0.0,
+        'shortremark': '展開看詳細...',
+        'longremark': '',
+        'link': check.link
+      }
+      serialized_cards.append(serialized_card)
+  
+  unique_cards = {}
 
-    result = tx.run(query, search_keyword=search_keyword)
-    return result.data()
+  for card in serialized_cards:
+    card_name = card['card_name']
+    if card_name not in unique_cards:
+        unique_cards[card_name] = card
 
-  with driver.session() as session:
-    result = session.read_transaction(run_query, search_keyword)
+  result = []
 
-  # 查詢結果
-  for record in result:
-    print(f"Source: {record['source']}, Destination: {record['destination']}")
-    print("卡片：", record['source'])
+  for card in unique_cards.values():
+    card['card_name'] = card['card_name'].replace('_', '\n')
     
-  driver.close()
+    
+    # 將卡片加入列表
+    result.append(card)
 
-  return jsonify('cardlist'),201
+  # 輸出結果
+  print(result)
+
+  return jsonify(result),201
 
 if __name__ == '__main__':
   app.run(debug='true',host='192.168.247.167') #192.168.50.151、192.168.176.197
