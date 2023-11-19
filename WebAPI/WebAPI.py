@@ -90,15 +90,53 @@ class user_cardlist(db.Model):
     
 class basic(db.Model):
   bank_id = db.Column(db.String(3), primary_key=True)
-  category = db.Column(db.String(1), primary_key=True)
-  card_id = db.Column(db.String(3), primary_key=True)
-  email = db.Column(db.String(150))
-  password = db.Column(db.String(60))
+  category = db.Column(db.String(1))
+  card_id = db.Column(db.String(3))
+  feedback = db.Column(db.Float)
+  kind = db.Column(db.String(50))
+  basic_remark = db.Column(db.String(100))
+  auto_debit = db.Column(db.Boolean)
+  e_bill = db.Column(db.Boolean)
 
-  def __init__(self, user_id, email, password):
-    self.user_id = user_id
-    self.email = email
-    self.password = password
+  def __init__(self, bank_id, category, card_id, feedback, kind, basic_remark, auto_debit, e_bill):
+    self.bank_id = bank_id
+    self.category = category
+    self.card_id = card_id
+    self.feedback = feedback
+    self.kind = kind
+    self.basic_remark = basic_remark
+    self.auto_debit = auto_debit
+    self.e_bill = e_bill
+
+class activity(db.Model):
+  bank_id = db.Column(db.String(3), primary_key=True)
+  category = db.Column(db.String(1))
+  card_id = db.Column(db.String(3))
+  title = db.Column(db.String(100))
+  start = db.Column(db.Date)
+  end = db.Column(db.Date)
+  feedback = db.Column(db.Float)
+  restriction = db.Column(db.Integer)  # 回饋上限
+  condition = db.Column(db.Integer)  # 回饋條件
+  store = db.Column(db.String(200))
+  activity_remark = db.Column(db.String(200))
+  link = db.Column(db.String(200)) 
+  state = db.Column(db.Boolean)  # 是否還有活動,0是有 1是結束
+
+  def __init__(self, bank_id, category, card_id, title, start, end, feedback, restriction, condition, store, activity_remark, link, state):
+    self.bank_id = bank_id
+    self.category = category
+    self.card_id = card_id
+    self.title = title
+    self.start = start
+    self.end = end
+    self.feedback = feedback
+    self.restriction = restriction
+    self.condition = condition
+    self.store = store
+    self.activity_remark = activity_remark
+    self.link = link
+    self.state = state
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -349,7 +387,7 @@ def getshop():
 
   return jsonify(names_list),203
 
-@app.route('/recommend', methods=['GET'])
+@app.route('/recommend', methods=['POST'])
 def recommend():
   search_keyword = request.json["shopname"]
   amount = request.json["amount"]
@@ -375,6 +413,9 @@ def recommend():
   
   card_namelist = ['富邦數位生活卡', 'OpenPossible聯名卡']
 
+  search_keyword = '家樂福'
+  categoricals = '超商'
+
   for i in range(len(card_namelist)):
     cardinf = cards.query.filter_by(card_name = card_namelist[i]).all()
     for card in cardinf:
@@ -384,7 +425,7 @@ def recommend():
         'card_id': card.card_id,
         'card_name': card.card_name,
         'yn': False,
-        'fbamount': 0.0,
+        'fbamount': 0,
         'shortremark': '展開看詳細...',
         'longremark': '',
         'link': check.link
@@ -402,11 +443,34 @@ def recommend():
 
   for card in unique_cards.values():
     card['card_name'] = card['card_name'].replace('_', '\n')
-    
-    
+    bank_data = user_banklist.query.filter_by(user_id=user_id, bank_id=card['bank_id']).first()
+    if(card['card_name'] in card_namelist):
+      basic_data = basic.query.filter_by(bank_id=card['bank_id'], category=card['category'], card_id=card['card_id']).filter(basic.kind.ilike('%' + categoricals + '%')).all()
+    else:
+      basic_data = basic.query.filter_by(bank_id=card['bank_id'], category=card['category'], card_id=card['card_id']).filter(basic.kind.ilike('%linepay%')).all()
+      card['shortremark'] = '需透過linepay支付，' + card['shortremark']
+    if len (basic_data) > 1:
+    # 如果使用者選擇自動扣繳，則選擇自動扣繳條件為 True 的那一種
+      if bank_data.auto_debit == True:
+        basic_data = [x for x in basic_data if x.auto_debit == True]
+    # 如果使用者沒有選擇自動扣繳，則選擇自動扣繳條件為 False 的那一種
+      else:
+        basic_data = [x for x in basic_data if x.auto_debit == False]
+      # 如果使用者選擇電子帳單，則選擇電子帳單條件為 True 的那一種
+      if bank_data.e_bill == True:
+        basic_data = [x for x in basic_data if x.e_bill == True]
+      # 如果使用者沒有選擇電子帳單，則選擇電子帳單條件為 False 的那一種
+      else:
+        basic_data = [x for x in basic_data if x.e_bill == False]
+      # 如果還有多種回饋比例，則選擇回饋比例最高的那一種
+      if len (basic_data) > 1:
+        basic_data = max (basic_data, key=lambda x: x.feedback)
+    # 取得信用卡的回饋比例
+    card['fbamount'] = round(amount*basic_data[0].feedback)
+    # 顯示回饋比例
+    print('card:',card['card_name'],'回饋:',card['fbamount'],'備註:',card['shortremark'])
     # 將卡片加入列表
     result.append(card)
-
   # 輸出結果
   print(result)
 
