@@ -3,8 +3,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 #更改Neo4j Bolt連線設定
-uri = "neo4j+s://cd122923.databases.neo4j.io"
-driver = GraphDatabase.driver(uri, auth=("neo4j", "password"))
+uri = "uri"
+driver = GraphDatabase.driver(uri, auth=("neo4j", "Password"))
 
 def do_Cypher(tx, text):
     result = tx.run(text)
@@ -45,7 +45,7 @@ def create_relationship(tx, from_node_name, to_node_names, relation_type):
 
 
 #-------------------------------以下為建立資料庫的 code------------------------------------------
-# 統一認同卡
+# 統一企業認同卡
 with driver.session() as session:
     rewards = [
         "open錢包", "icash_Pay", "Apple_Pay", "Google_Pay",
@@ -53,9 +53,9 @@ with driver.session() as session:
         "統一時代百貨", "夢時代", "速邁樂加油站", "聖德科斯",
         "misterdonut", "博客來", "foodomo"
         ]
-    session.write_transaction(create_relationship, "統一認同卡", rewards, "reward")
+    session.write_transaction(create_relationship, "統一企業認同卡", rewards, "reward")
 
-# 酷玩卡 
+# 酷玩卡_鈦金卡 
 with driver.session() as session:
     rewards = [
         "台灣中油", "台灣大哥大", "中華電信", "遠傳", "台灣之星", "亞太", 
@@ -63,9 +63,9 @@ with driver.session() as session:
         "pchome線上購物", "momo", "樂天", "淘寶",
         "博客來", "udn買東西", "PayEasy", "東京著衣", "天母嚴選", 
         "OB嚴選", "lativ", "紅陽科技", "綠界科技", "Gomaji",
-        "friday購物", "東森購物", "生活市集", "iTunes", "linepay"
+        "friday購物", "東森購物", "生活市集", "iTunes", "linepay",  
     ]
-    session.write_transaction(create_relationship, "酷玩卡", rewards, "reward")
+    session.write_transaction(create_relationship, "酷玩卡_鈦金卡", rewards, "reward")
 
 # MUJI無印良品聯名卡_白金卡
 with driver.session() as session:
@@ -277,29 +277,29 @@ with driver.session() as session:
 
 # 中信兄弟聯名卡_白金卡
 with driver.session() as session:
-    rewards = []
+    rewards = ["中信兄弟售票網"]
     session.write_transaction(create_relationship, "中信兄弟聯名卡_白金卡", rewards, "reward")
 
 # 中信兄弟聯名卡_鈦金卡
 with driver.session() as session:
-    rewards = []
+    rewards = ["中信兄弟售票網"]
     session.write_transaction(create_relationship, "中信兄弟聯名卡_鈦金卡", rewards, "reward")
 
 # 中信兄弟聯名卡_御璽卡
 with driver.session() as session:
-    rewards = []
+    rewards = ["中信兄弟售票網"]
     session.write_transaction(create_relationship, "中信兄弟聯名卡_御璽卡", rewards, "reward")
 
 # 中信兄弟聯名卡_鼎極卡 
 with driver.session() as session:
-    rewards = []
+    rewards = ["中信兄弟售票網"]
     session.write_transaction(create_relationship, "中信兄弟聯名卡_鼎極卡", rewards, "reward")
 
 # SuperLife_VISA卡
 with driver.session() as session:
     rewards = [
         "家樂福", "大潤發", "愛買", "楓康", "保費",
-        "國內餐飲"
+        "餐廳"
     ]
     session.write_transaction(create_relationship, "SuperLife_VISA卡", rewards, "reward")
 
@@ -311,7 +311,7 @@ with driver.session() as session:
         "台灣中油",
         "燦坤", "全國電子", "順發3c", "三井3c", "大同3c",
         "大潤發", "大買家", "愛買", "家樂福",
-        "國內餐飲", "住宿", "飯店",
+        "餐廳", "住宿", "飯店",
         "旅行社", "飛機航空公司"
     ]
     session.write_transaction(create_relationship, "中信紅利卡_生活菁英", rewards, "reward")
@@ -348,14 +348,14 @@ with driver.session() as session:
 # 中信紅利晶緻卡_旅遊族
 with driver.session() as session:
     rewards = [
-        "海外", "旅行社", "住宿", "飯店", "國內餐飲"
+        "海外", "旅行社", "住宿", "飯店", "餐廳"
     ]
     session.write_transaction(create_relationship, "中信紅利晶緻卡_旅遊族", rewards, "reward")
 
 # 中信紅利晶緻卡_行動族
 with driver.session() as session:
     rewards = [
-        "台灣中油", "國內餐飲", "保費", "海外"
+        "台灣中油", "餐廳", "保費", "海外"
     ]
     session.write_transaction(create_relationship, "中信紅利晶緻卡_行動族", rewards, "reward")
 
@@ -378,14 +378,14 @@ with driver.session() as session:
 # 中信紅利御璽卡_旅遊族
 with driver.session() as session:
     rewards = [
-        "海外", "旅行社", "住宿", "飯店", "國內餐飲"
+        "海外", "旅行社", "住宿", "飯店", "餐廳"
     ]
     session.write_transaction(create_relationship, "中信紅利御璽卡_旅遊族", rewards, "reward")
 
 # 中信紅利御璽卡_行動族
 with driver.session() as session:
     rewards = [
-        "台灣中油", "國內餐飲", "保費", "海外"
+        "台灣中油", "餐廳", "保費", "海外"
     ]
     session.write_transaction(create_relationship, "中信紅利御璽卡_行動族", rewards, "reward")
 
@@ -470,7 +470,7 @@ with driver.session() as session:
         "PlayStation", "Square_enix", "Steam", "Ubisoft", "Xbox",
         "appleTV", "CATCHPLAY", "iTunes", "KKBOX", "LINETV", 
         "LiTV", "Netflix", "Spotify", "Youtube_Premium", "KKTV",
-        "Amazon_Prime_Video", "Disney_Plus", "讀墨電子書READMOO"
+        "Amazon_Prime_Video", "Disney_Plus", "讀墨電子書READMOO", 
         "台灣角川官方網站", "尖端網路書店", "青文出版社", "長鴻新漫網",
         "台灣東販出版社", "東立電子書城", "動畫瘋", "Booklive", "BOOKWALKER",
         "Kakao_Webtoon", "LINE_WEBTOON","POCKET_COMICS", "讀墨電子書READMOO",

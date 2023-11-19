@@ -136,7 +136,7 @@ with driver.session() as session:
         session.write_transaction(create_knowledge_point, "海外", "include", book)
 print("----------------------------------------------------------------")
 
-# 書局
+# 書店
 with driver.session() as session:
     books = [
         "金石堂", "金玉堂", "誠品", "墊腳石", "紀伊國屋",
@@ -372,7 +372,7 @@ with driver.session() as session:
         session.write_transaction(create_knowledge_point, "電商購物", "include", shop)
 print("----------------------------------------------------------------")
 
-# 電子支付
+#支付方式
 with driver.session() as session:
     PayList = [
         "歐付寶", "橘子支付", "ezPay簡單付", "街口支付", "全盈_PAY", "全支付" 
