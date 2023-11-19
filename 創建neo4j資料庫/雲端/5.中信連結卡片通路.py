@@ -311,7 +311,7 @@ with driver.session() as session:
         "台灣中油",
         "燦坤", "全國電子", "順發3c", "三井3c", "大同3c",
         "大潤發", "大買家", "愛買", "家樂福",
-        "餐廳", "住宿", "飯店",
+        "餐廳", "飯店",
         "旅行社", "飛機航空公司"
     ]
     session.write_transaction(create_relationship, "中信紅利卡_生活菁英", rewards, "reward")
@@ -319,7 +319,7 @@ with driver.session() as session:
 # 中信紅利卡_時尚高手
 with driver.session() as session:
     rewards = [
-        "百貨公司", "書店",
+        "百貨公司", "書局",
         "大潤發", "大買家", "愛買", "家樂福"
     ]
     session.write_transaction(create_relationship, "中信紅利卡_時尚高手", rewards, "reward")
@@ -348,7 +348,7 @@ with driver.session() as session:
 # 中信紅利晶緻卡_旅遊族
 with driver.session() as session:
     rewards = [
-        "海外", "旅行社", "住宿", "飯店", "餐廳"
+        "海外", "旅行社", "飯店", "餐廳"
     ]
     session.write_transaction(create_relationship, "中信紅利晶緻卡_旅遊族", rewards, "reward")
 
@@ -378,7 +378,7 @@ with driver.session() as session:
 # 中信紅利御璽卡_旅遊族
 with driver.session() as session:
     rewards = [
-        "海外", "旅行社", "住宿", "飯店", "餐廳"
+        "海外", "旅行社", "飯店", "餐廳"
     ]
     session.write_transaction(create_relationship, "中信紅利御璽卡_旅遊族", rewards, "reward")
 
@@ -417,7 +417,7 @@ with driver.session() as session:
 with driver.session() as session:
     rewards = [
         "toyota豐田", "Lexus凌志", "yoxi計程車", "iRent",
-        "hotai購商城購物", "長源汽車", "和泰產險"
+        "hotai購商城購物", "長源汽車", "和泰產險",
         "家樂福", "大潤發", "愛買", "ikea宜家家居", "特力屋", 
         "旅行社", "飛機航空公司", "飯店", 
         "Agoda", "Booking_com", "Expedia", "Hotels_com", "AsiaYo",
@@ -490,7 +490,7 @@ with driver.session() as session:
 # ALL_ME卡
 with driver.session() as session:
     rewards = [
-        "SevenEleven711", "全家FamilyMart", "萊爾富", "OK", "美廉社",
+        "SevenEleven711統一超商", "全家FamilyMart", "萊爾富", "OK", "美廉社",
         "小北百貨", "棉花田生機園地", 
         "台鐵", "台灣大車隊", "嘟嘟房", "路邊停車",
         "屈臣氏", "cosmed康是美", "poya寶雅", "松本清", "日藥本舖",
