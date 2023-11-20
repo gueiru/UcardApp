@@ -117,7 +117,7 @@ with driver.session() as session:
         "台北W飯店", "台北君悅酒店", "台中日月千禧酒店", "君品酒店",
         "台北福華大飯店", "新竹福華大飯店", "台中福華大飯店",
         "溪頭福華渡假飯店", "高雄福華大飯店", "石門水庫福華渡假飯店",
-        "墾丁福華渡假飯店", "漢來大飯店"
+        "墾丁福華渡假飯店", "漢來大飯店", 
         "漢堡王", "鬍鬚張", "麥當勞", "星巴克", "TeaTop台灣第一味",
         "康青龍", "萬波島嶼紅茶", "貢茶", "赤鬼炙燒牛排", "misterdonut",
         "爭鮮迴轉壽司"
@@ -209,19 +209,11 @@ with driver.session() as session:
         "馥森里山藝術生態園", "馥森阪治Trio", "花蓮理想大地", 
         "台北福華大飯店", "新竹福華大飯店", "台中福華大飯店",
         "溪頭福華渡假飯店", "高雄福華大飯店", "石門水庫福華渡假飯店",
-        "墾丁福華渡假飯店", "漢來大飯店", "台中金典酒店"
+        "墾丁福華渡假飯店", "漢來大飯店", "台中金典酒店", "民宿", "青年旅館",
+        "花蓮蝴蝶谷溫泉渡假村"
     ]
     for h in hotels:
         session.write_transaction(create_knowledge_point, "飯店", "include", h)
-print("----------------------------------------------------------------")
-
-# 住宿
-with driver.session() as session:
-    hotels = [
-        "民宿", "青年旅館", "飯店"
-    ]
-    for h in hotels:
-        session.write_transaction(create_knowledge_point, "住宿", "include", h)
 print("----------------------------------------------------------------")
 
 # 旅行社
@@ -339,7 +331,7 @@ print("----------------------------------------------------------------")
 with driver.session() as session:
     animations = [
         "台灣角川官方網站", "尖端網路書店", "青文出版社", "長鴻新漫網",
-        "台灣東販出版社", "東立電子書", "動畫瘋", "Booklive", "BOOKWALKER",
+        "台灣東販出版社", "東立電子書城", "動畫瘋", "Booklive", "BOOKWALKER",
         "Kakao_Webtoon", "LINE_WEBTOON","POCKET_COMICS", "讀墨電子書READMOO"
     ]
     for anim in animations:
