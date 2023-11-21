@@ -157,7 +157,7 @@ with driver.session() as session:
     rewards = [
         "台灣大哥大", "MyVideo", "凱擘", "App_Store", "Google_Play",
         "PlayStation", "Nintendo", "Steam",
-        "SevenEleven711統一超商", "全家FamilyMart",
+        "SevenEleven7Eleven711", "全家FamilyMart",
         "台灣中油", "全國加油站", "台亞", "西歐加油站", "速邁樂加油站",
         "保費", "淘寶", "天貓", "中國", "香港", "澳門"
     ]
