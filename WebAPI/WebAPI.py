@@ -18,8 +18,8 @@ import gdown
 import requests
 import json
 # data_utils.download_data_gdown("./")
-# ws = WS("./data")
-# pos = POS("./data")
+ws = WS("./data")
+pos = POS("./data")
 # ner = NER("./data")
 
 app = Flask(__name__)
@@ -260,6 +260,27 @@ def getbank():
     serialized_banks.append(serialized_bank)
   return jsonify(serialized_banks),201
 
+@app.route('/editgetbank', methods=['POST'])
+def editgetbank():
+  data = request.json
+  user_id = jwt.decode(data['usertoken'], app.config['JWT_ID_SECRET_KEY'], algorithms=['HS256'])['user_id']
+  banklist = banks.query.all()
+  
+  # 陣列化資料
+  serialized_banks = []
+  for bank in banklist:
+    check = user_banklist.query.filter_by(user_id=user_id,bank_id=bank.bank_id).first()
+    if check:
+      serialized_bank = {
+        'bank_id': bank.bank_id,
+        'bank_name': bank.bank_name,
+        'ischeck': True,
+        'auto_debit': check.auto_debit,
+        'e_bill': check.e_bill
+      }
+    serialized_banks.append(serialized_bank)
+  return jsonify(serialized_banks),201
+
 @app.route('/add_bank', methods=['POST'])
 def add_bank():
   data = request.json
@@ -411,11 +432,65 @@ def recommend():
     }
     serialized_cards.append(serialized_card)
   
-  card_namelist = ['富邦數位生活卡', 'OpenPossible聯名卡']
+  # neo4j讀取資料
 
-  search_keyword = '家樂福'
-  categoricals = '超商'
+  #更改Neo4j Bolt連線設定
+  uri = ""    # neo4j連結
+  username = ""  # neo4j帳號
+  password = ""  # neo4j密碼
 
+  # 定義查詢，並加入查詢參數
+  cypher_query =  """
+                    OPTIONAL MATCH (c:card)-[:reward]-(shop)-[:include]-(cate:Categorical)
+                    WHERE toLower(shop.name) CONTAINS toLower($search_keyword)
+                    RETURN c, shop, cate
+                """
+            
+  query = """
+              OPTIONAL MATCH (cc:card)-[:reward]-(cate:Categorical)-[:include]-(shop)
+              WHERE toLower(shop.name) CONTAINS toLower($search_keyword)
+              RETURN cc, cate
+          """
+
+  # 定義函數執行查詢
+  def execute_query(cypher_query, shop_name):
+    with GraphDatabase.driver(uri, auth=(username, password)) as driver:
+        with driver.session() as session:
+            result = session.run(cypher_query, search_keyword=shop_name)
+            return result.data()
+
+  def double_query(query, shop_name):
+      with GraphDatabase.driver(uri, auth=(username, password)) as driver:
+          with driver.session() as session:
+              result = session.run(query, search_keyword=shop_name)
+              return result.data()
+          
+  card_namelist =[]
+  # 執行並存入陣列
+  result_data = execute_query(cypher_query, search_keyword)
+  result_data2 = double_query(query, search_keyword)
+
+  for r in result_data:
+    for r2 in result_data2:
+        if r['c'] and r['cate'] and r2['cc']:
+            card_namelist.append(r2['cc']['name'])
+            categoricals = r2['cate']['name']
+    break
+    
+  for r in result_data:
+      if r['c'] and r['cate']:
+          card_namelist.append(r['c']['name'])
+          categoricals = r['cate']['name']
+      elif r['cate']:
+          for r2 in result_data2:
+              card_namelist.append(r2['cc']['name'])
+              categoricals = r2['cate']['name'] 
+      else:
+          print(f"卡片:{r['c']['name']} || 類別:{r['shop']['name']}")
+          card_namelist.append(r['c']['name'])
+          categoricals = search_keyword
+
+  # 將neo4j讀取到的卡片存入陣列
   for i in range(len(card_namelist)):
     cardinf = cards.query.filter_by(card_name = card_namelist[i]).all()
     for card in cardinf:
@@ -442,39 +517,81 @@ def recommend():
   result = []
 
   for card in unique_cards.values():
-    card['card_name'] = card['card_name'].replace('_', '\n')
     bank_data = user_banklist.query.filter_by(user_id=user_id, bank_id=card['bank_id']).first()
-    if(card['card_name'] in card_namelist):
-      basic_data = basic.query.filter_by(bank_id=card['bank_id'], category=card['category'], card_id=card['card_id']).filter(basic.kind.ilike('%' + categoricals + '%')).all()
+    if not bank_data:
+      auto_debit = False
+      e_bill = False
     else:
-      basic_data = basic.query.filter_by(bank_id=card['bank_id'], category=card['category'], card_id=card['card_id']).filter(basic.kind.ilike('%linepay%')).all()
+      auto_debit = bank_data.auto_debit
+      e_bill = bank_data.e_bill
+    
+    # 短期活動回饋計算
+    if(card['yn'] == True):
+      activity_data = activity.query.filter_by(bank_id = card['bank_id'], category = card['category'], card_id = card['card_id'], state = 0).filter(activity.store.ilike(search_keyword)).all()
+      if activity_data:
+        card['shortremark'] = '有符合短期活動，' + card['shortremark']
+        for ac in activity_data:
+          if(ac.feedback<0):
+            if ac.restriction and ac.restriction <= amount:
+              card['fbamount'] = card['fbamount'] + ac.restrictionround
+              card['longremark'] = card['longremark'] + '短期活動名稱：' + ac.title + '\n短期活動加碼金額：' + ac.restrictionround + '元\n'
+            else:
+              card['fbamount'] = card['fbamount'] + round(amount*ac.feedback)
+              card['longremark'] = card['longremark'] + '短期活動名稱：' + ac.title + '\n短期活動加碼金額：' + round(amount*ac.feedback) + '元\n'
+          else:
+            if ac.condition and ac.condition <= amount:
+              card['fbamount'] = card['fbamount'] + ac.feedback
+              card['longremark'] = card['longremark'] + '短期活動名稱：' + ac.title + '\n短期活動加碼金額：' + ac.feedback + '元\n'
+      else:
+        activity_data = activity.query.filter_by(bank_id = card['bank_id'], category = card['category'], card_id = '000', state = 0).filter(activity.store.ilike(search_keyword)).all()
+        if activity_data:
+          card['shortremark'] = '有符合短期活動，' + card['shortremark']
+          for ac in activity_data:
+            if(ac.feedback<0):
+              if ac.restriction and ac.restriction <= amount:
+                card['fbamount'] = card['fbamount'] + ac.restrictionround
+                card['longremark'] = card['longremark'] + '短期活動名稱：' + ac.title + '\n短期活動加碼金額：' + ac.restrictionround + '元\n'
+              else:
+                card['fbamount'] = card['fbamount'] + round(amount*ac.feedback)
+                card['longremark'] = card['longremark'] + '短期活動名稱：' + ac.title + '\n短期活動加碼金額：' + round(amount*ac.feedback) + '元\n'
+            else:
+              if ac.condition and ac.condition <= amount:
+                card['fbamount'] = card['fbamount'] + ac.feedback
+                card['longremark'] = card['longremark'] + '短期活動名稱：' + ac.title + '\n短期活動加碼金額：' + ac.feedback + '元\n'
+    # 長期活動回饋計算
+    if(card['card_name'] in card_namelist):
+      basic_data = basic.query.filter_by(bank_id=card['bank_id'], category=card['category'], card_id=card['card_id'], kind=categoricals).all()
+    else:
+      basic_data = basic.query.filter_by(bank_id=card['bank_id'], category=card['category'], card_id=card['card_id'], kind='linepay').all()
       card['shortremark'] = '需透過linepay支付，' + card['shortremark']
     if len (basic_data) > 1:
-    # 如果使用者選擇自動扣繳，則選擇自動扣繳條件為 True 的那一種
-      if bank_data.auto_debit == True:
-        basic_data = [x for x in basic_data if x.auto_debit == True]
-    # 如果使用者沒有選擇自動扣繳，則選擇自動扣繳條件為 False 的那一種
-      else:
+      a_list =[]
+      e_list =[]
+      for a_e in basic_data:
+        a_list.append(a_e.auto_debit)
+        e_list.append(a_e.e_bill)
+      # 如果使用者選擇自動扣繳，則選擇自動扣繳條件為 True 的那一種
+      if auto_debit == False and len(list(dict.fromkeys(a_list))) == 2:
         basic_data = [x for x in basic_data if x.auto_debit == False]
       # 如果使用者選擇電子帳單，則選擇電子帳單條件為 True 的那一種
-      if bank_data.e_bill == True:
-        basic_data = [x for x in basic_data if x.e_bill == True]
-      # 如果使用者沒有選擇電子帳單，則選擇電子帳單條件為 False 的那一種
-      else:
+      if e_bill == False and len(list(dict.fromkeys(e_list))) == 2:
         basic_data = [x for x in basic_data if x.e_bill == False]
       # 如果還有多種回饋比例，則選擇回饋比例最高的那一種
       if len (basic_data) > 1:
         basic_data = max (basic_data, key=lambda x: x.feedback)
-    # 取得信用卡的回饋比例
-    card['fbamount'] = round(amount*basic_data[0].feedback)
-    # 顯示回饋比例
-    print('card:',card['card_name'],'回饋:',card['fbamount'],'備註:',card['shortremark'])
-    # 將卡片加入列表
+    try:
+      card['fbamount'] = round(amount*basic_data.feedback)
+      card['longremark'] = card['longremark'] + '長期卡片回饋比例：' + basic_data.feedback*100 + '%\n' + '長期活動回饋金額：' + round(amount*basic_data.feedback) + '元'
+    except:
+      card['fbamount'] = round(amount*basic_data[0].feedback)
+      card['longremark'] = card['longremark'] + '長期卡片回饋比例：' + basic_data[0].feedback*100 + '%\n' + '長期活動回饋金額：' + round(amount*basic_data[0].feedback) + '元'
+    
+    card['card_name'] = card['card_name'].replace('_', '\n')
     result.append(card)
-  # 輸出結果
-  print(result)
-
-  return jsonify(result),201
+  sorted_data = sorted(result, key=lambda x: x['fbamount'], reverse=True)
+  sorted_data = sorted_data[:5]
+  
+  return jsonify(sorted_data),201
 
 if __name__ == '__main__':
   app.run(debug='true',host='192.168.50.151') #192.168.50.151、192.168.176.197
