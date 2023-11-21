@@ -65,6 +65,112 @@ def create_knowledge_point(tx, label, relation, obj):
 
 #-------------------------------以下為建立資料庫的code------------------------------------------
 
+# 超商
+with driver.session() as session:
+    convenience_store = ["SevenEleven7Eleven711", "全家FamilyMart", "萊爾富", "OK", "美廉社"]
+    for cv in convenience_store:
+        session.write_transaction(create_knowledge_point, "超商", "include", cv)
+print("----------------------------------------------------------------")
+
+# 生活百貨+3C
+with driver.session() as session:
+    lifes = [
+        "小北百貨", "poya寶雅", "ikea宜家家居", "特力屋", "muji無印良品",
+        "FunNow", "拍享券", "一起寄", "九乘九文具專家",
+        "卡多摩嬰童館", "Wstyle", "咕咕G寵物城", "貓狗大棧寵物百貨",
+        "SofyDog蘇菲狗寵物精品", "寵物公園", "凱朵寵物美容沙龍", "貓狗隊長",
+        "燦坤", "全國電子", "順發3c", "三井3c", "大同3c"   
+    ]
+    for life in lifes:
+        session.write_transaction(create_knowledge_point, "生活百貨", "include", life)
+print("----------------------------------------------------------------")
+
+# 影音串流平台
+with driver.session() as session:
+    musics = [
+        "Google_Play", "Disney_Plus", "Netflix", "Spotify", "KKBOX", "KKTV",
+        "App_Store", "Apple_Music", "iCloud", "MyVideo", "friday影音",
+        "凱擘", "PlayStation", "Nintendo", "Steam",
+        "Bandai萬代南夢宮遊戲", "Blizzard暴雪", "Electronic_arts",
+        "Epic_games_store", "GASH", "Garena", "MyCard", "Nintendo",
+        "Square_enix", "Ubisoft", "Xbox",
+        "appleTV", "CATCHPLAY", "iTunes", "LINETV", 
+        "LiTV", "Youtube_Premium", "Amazon_Prime_Video",
+        "讀墨電子書READMOO"
+    ]
+    for music in musics:
+        session.write_transaction(create_knowledge_point, "影音遊戲", "include", music)
+print("----------------------------------------------------------------")
+
+# 漫畫動畫
+with driver.session() as session:
+    animations = [
+        "台灣角川官方網站", "尖端網路書店", "青文出版社", "長鴻新漫網",
+        "台灣東販出版社", "東立電子書城", "動畫瘋", "Booklive", "BOOKWALKER",
+        "Kakao_Webtoon", "LINE_WEBTOON","POCKET_COMICS", "讀墨電子書READMOO"
+    ]
+    for anim in animations:
+        session.write_transaction(create_knowledge_point, "漫畫動畫", "include", anim)
+print("----------------------------------------------------------------")
+
+# 數位購票
+with driver.session() as session:
+    Tickets = [
+        "udn售票", "iNDIEVOX售票", "KKTIX售票", "ibon售票",
+        "tixcraft拓元售票", "FamiTicket全網購票", "OPENTIX兩廳院文化生活",
+        "中信兄弟售票網", "年代售票", "寬宏售票"
+    ]
+    for ticket in Tickets:
+        session.write_transaction(create_knowledge_point, "數位購票", "include", ticket)
+print("----------------------------------------------------------------")
+
+#電商購物
+with driver.session() as session:
+    shopping_websites = [
+        "蝦皮購物", "momo", "pchome線上購物", "yahoo奇摩購物中心", "小樹購",
+        "蝦皮商城", "amazon", "淘寶", "天貓", "博客來",
+        "超級商城", "myfone購物", "udn買東西", "pchome商店街",
+        "樂天", "friday購物", "生活市集", "yahoo超級商城",
+        "松果購物", "citiesocial找好東西", "zalora", "shopback", "yahoo拍賣",
+        "東森購物", "森森", "viva", "PayEasy", "東京著衣", "天母嚴選", 
+        "OB嚴選", "lativ", "紅陽科技", "綠界科技", "Gomaji"
+    ]
+    for shop in shopping_websites:
+        session.write_transaction(create_knowledge_point, "電商購物", "include", shop)
+print("----------------------------------------------------------------")
+
+# 電子支付
+with driver.session() as session:
+    PayList = [
+        "歐付寶", "橘子支付", "ezPay簡單付", "街口支付", "全盈_PAY", "全支付" 
+        "PChome國際連", "一卡通Money", "悠遊付", "icash_Pay", "linepay", 
+        "Apple_Pay", "Samsung_Pay", "Google_Pay", "台灣Pay", "玉山Wallet", 
+        "Hami_Pay", "open錢包", "中油pay", "和泰pay"
+    ]
+    for pay in PayList:
+        session.write_transaction(create_knowledge_point, "電子支付", "include", pay)
+print("----------------------------------------------------------------")
+      
+# 交通
+with driver.session() as session:
+    Traffic_List = [
+        "高鐵", "計程車", "公車", "台鐵", "捷運",
+        "Uber", "LINE_TAXI", "yoxi計程車", "台灣大車隊", "大都會計程車",
+        "和運租車", "iRent", "格上租車", "中租租車", "AVIS租車",
+        "ipass一卡通", "悠遊卡"
+    ]
+    for transportation in Traffic_List:
+        session.write_transaction(create_knowledge_point, "交通", "include", transportation)
+print("----------------------------------------------------------------")
+
+# 飛機航空公司
+with driver.session() as session:
+    Airlines = [
+        "虎航", "長榮航空", "華航", "星宇", "立榮", "華信"
+    ]
+    for airline in Airlines:
+        session.write_transaction(create_knowledge_point, "飛機航空公司", "include", airline)
+
 
 # 和泰集團
 with driver.session() as session:
@@ -120,7 +226,7 @@ with driver.session() as session:
         "墾丁福華渡假飯店", "漢來大飯店", 
         "漢堡王", "鬍鬚張", "麥當勞", "星巴克", "TeaTop台灣第一味",
         "康青龍", "萬波島嶼紅茶", "貢茶", "赤鬼炙燒牛排", "misterdonut",
-        "爭鮮迴轉壽司"
+        "爭鮮迴轉壽司", "涮乃葉"
     ]
     for restaurant in restaurants:
         session.write_transaction(create_knowledge_point, "餐廳", "include", restaurant)
@@ -284,116 +390,12 @@ print("----------------------------------------------------------------")
 # 外送
 with driver.session() as session:
     food_delivery_platforms = [
-        "Uber_Eats", "foodpanda", "foodomo", "inline"
+        "UberEats", "foodpanda", "foodomo", "inline"
     ]
     for p in food_delivery_platforms:
         session.write_transaction(create_knowledge_point, "外送", "include", p)
 print("----------------------------------------------------------------")
 
-# 超商
-with driver.session() as session:
-    convenience_store = ["SevenEleven711統一超商", "全家FamilyMart", "萊爾富", "OK", "美廉社"]
-    for cv in convenience_store:
-        session.write_transaction(create_knowledge_point, "超商", "include", cv)
-print("----------------------------------------------------------------")
 
-# 生活百貨+3C
-with driver.session() as session:
-    lifes = [
-        "小北百貨", "poya寶雅", "ikea宜家家居", "特力屋", "muji無印良品",
-        "FunNow", "拍享券", "一起寄", "九乘九文具專家",
-        "卡多摩嬰童館", "Wstyle", "咕咕G寵物城", "貓狗大棧寵物百貨",
-        "SofyDog蘇菲狗寵物精品", "寵物公園", "凱朵寵物美容沙龍", "貓狗隊長",
-        "燦坤", "全國電子", "順發3c", "三井3c", "大同3c"   
-    ]
-    for life in lifes:
-        session.write_transaction(create_knowledge_point, "生活百貨", "include", life)
-print("----------------------------------------------------------------")
-
-# 影音串流平台
-with driver.session() as session:
-    musics = [
-        "Google_Play", "Disney_Plus", "Netflix", "Spotify", "KKBOX", "KKTV",
-        "App_Store", "Apple_Music", "iCloud", "MyVideo", "friday影音",
-        "凱擘", "PlayStation", "Nintendo", "Steam",
-        "Bandai萬代南夢宮遊戲", "Blizzard暴雪", "Electronic_arts",
-        "Epic_games_store", "GASH", "Garena", "MyCard", "Nintendo",
-        "Square_enix", "Ubisoft", "Xbox",
-        "appleTV", "CATCHPLAY", "iTunes", "LINETV", 
-        "LiTV", "Youtube_Premium", "Amazon_Prime_Video",
-        "讀墨電子書READMOO"
-    ]
-    for music in musics:
-        session.write_transaction(create_knowledge_point, "影音遊戲", "include", music)
-print("----------------------------------------------------------------")
-
-# 漫畫動畫
-with driver.session() as session:
-    animations = [
-        "台灣角川官方網站", "尖端網路書店", "青文出版社", "長鴻新漫網",
-        "台灣東販出版社", "東立電子書城", "動畫瘋", "Booklive", "BOOKWALKER",
-        "Kakao_Webtoon", "LINE_WEBTOON","POCKET_COMICS", "讀墨電子書READMOO"
-    ]
-    for anim in animations:
-        session.write_transaction(create_knowledge_point, "漫畫動畫", "include", anim)
-print("----------------------------------------------------------------")
-
-# 數位購票
-with driver.session() as session:
-    Tickets = [
-        "udn售票", "iNDIEVOX售票", "KKTIX售票", "ibon售票",
-        "tixcraft拓元售票", "FamiTicket全網購票", "OPENTIX兩廳院文化生活",
-        "中信兄弟售票網", "年代售票", "寬宏售票"
-    ]
-    for ticket in Tickets:
-        session.write_transaction(create_knowledge_point, "數位購票", "include", ticket)
-print("----------------------------------------------------------------")
-
-#電商購物
-with driver.session() as session:
-    shopping_websites = [
-        "蝦皮購物", "momo", "pchome線上購物", "yahoo奇摩購物中心", "小樹購",
-        "蝦皮商城", "amazon", "淘寶", "天貓", "博客來",
-        "超級商城", "myfone購物", "udn買東西", "pchome商店街",
-        "樂天", "friday購物", "生活市集", "yahoo超級商城",
-        "松果購物", "citiesocial找好東西", "zalora", "shopback", "yahoo拍賣",
-        "東森購物", "森森", "viva", "PayEasy", "東京著衣", "天母嚴選", 
-        "OB嚴選", "lativ", "紅陽科技", "綠界科技", "Gomaji"
-    ]
-    for shop in shopping_websites:
-        session.write_transaction(create_knowledge_point, "電商購物", "include", shop)
-print("----------------------------------------------------------------")
-
-# 電子支付
-with driver.session() as session:
-    PayList = [
-        "歐付寶", "橘子支付", "ezPay簡單付", "街口支付", "全盈_PAY", "全支付" 
-        "PChome國際連", "一卡通Money", "悠遊付", "icash_Pay", "linepay", 
-        "Apple_Pay", "Samsung_Pay", "Google_Pay", "台灣Pay", "玉山Wallet", 
-        "Hami_Pay", "open錢包", "中油pay", "和泰pay"
-    ]
-    for pay in PayList:
-        session.write_transaction(create_knowledge_point, "電子支付", "include", pay)
-print("----------------------------------------------------------------")
-      
-# 交通
-with driver.session() as session:
-    Traffic_List = [
-        "高鐵", "計程車", "公車", "台鐵", "捷運",
-        "Uber", "LINE_TAXI", "yoxi計程車", "台灣大車隊", "大都會計程車",
-        "和運租車", "iRent", "格上租車", "中租租車", "AVIS租車",
-        "ipass一卡通", "悠遊卡"
-    ]
-    for transportation in Traffic_List:
-        session.write_transaction(create_knowledge_point, "交通", "include", transportation)
-print("----------------------------------------------------------------")
-
-# 飛機航空公司
-with driver.session() as session:
-    Airlines = [
-        "虎航", "長榮航空", "華航", "星宇", "立榮", "華信"
-    ]
-    for airline in Airlines:
-        session.write_transaction(create_knowledge_point, "飛機航空公司", "include", airline)
         
 print("------------------done------------------")
