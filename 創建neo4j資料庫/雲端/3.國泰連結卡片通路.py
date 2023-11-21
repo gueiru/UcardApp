@@ -104,7 +104,7 @@ with driver.session() as session:
         "家樂福",
         "台灣中油",
         "高鐵",
-        "SevenEleven711統一超商", "全家FamilyMart", "全聯福利中心",
+        "SevenEleven7Eleven711", "全家FamilyMart", "全聯福利中心",
         "麥當勞", "星巴克",
         "foodomo",
         "遠東SOGO百貨",
@@ -137,7 +137,7 @@ with driver.session() as session:
                 "iFG遠雄廣場", "台南FOCUS", "悅誠廣場", "欣欣百貨", "宏匯廣場",
                 "高雄棧貳庫商場", "樂購廣場", "NOKE忠泰樂生活", "昇恆昌", 
                 
-                "Uber_Eats", "foodpanda", "foodomo", "inline", 
+                "UberEats", "foodpanda", "foodomo", "inline", 
                 
                 # 餐廳
                 "餐廳",

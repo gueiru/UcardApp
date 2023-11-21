@@ -49,7 +49,7 @@ def create_relationship(tx, from_node_name, to_node_names, relation_type):
 with driver.session() as session:
     rewards = [
         "open錢包", "icash_Pay", "Apple_Pay", "Google_Pay",
-        "SevenEleven711統一超商", "星巴克", "cosmed康是美",
+        "SevenEleven7Eleven711", "星巴克", "cosmed康是美",
         "統一時代百貨", "夢時代", "速邁樂加油站", "聖德科斯",
         "misterdonut", "博客來", "foodomo"
         ]
@@ -686,7 +686,7 @@ with driver.session() as session:
 # ALL_ME卡
 with driver.session() as session:
     rewards = [
-        "SevenEleven711統一超商", "全家FamilyMart", "萊爾富", "OK", "美廉社",
+        "SevenEleven7Eleven711", "全家FamilyMart", "萊爾富", "OK", "美廉社",
         "小北百貨", "棉花田生機園地", 
         "台鐵", "台灣大車隊", "嘟嘟房", "路邊停車",
         "屈臣氏", "cosmed康是美", "poya寶雅", "松本清", "日藥本舖",
