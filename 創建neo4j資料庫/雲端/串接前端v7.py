@@ -8,7 +8,7 @@ username = "neo4j"
 password = "password"
 
 # 用户输入的店铺名称
-user_input_shop_name = "萊爾富"
+user_input_shop_name = "餐廳"
 
 # 定义查询语句，并使用参数化查询
 cypher_query =  """
