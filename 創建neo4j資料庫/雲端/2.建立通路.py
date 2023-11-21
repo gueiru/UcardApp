@@ -120,7 +120,7 @@ with driver.session() as session:
         "墾丁福華渡假飯店", "漢來大飯店", 
         "漢堡王", "鬍鬚張", "麥當勞", "星巴克", "TeaTop台灣第一味",
         "康青龍", "萬波島嶼紅茶", "貢茶", "赤鬼炙燒牛排", "misterdonut",
-        "爭鮮迴轉壽司"
+        "爭鮮迴轉壽司", "涮乃葉"
     ]
     for restaurant in restaurants:
         session.write_transaction(create_knowledge_point, "餐廳", "include", restaurant)
